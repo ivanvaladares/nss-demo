@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Node Suggestive Search - example of usage</title>
+	<style>
+		html {
+			font: normal normal normal 18px/1.2 "Helvetica Neue", Roboto, "Segoe UI", Calibri, sans-serif;
+			color: #292f33;
+		}
+
+		input {
+			padding: 8px 12px;
+			font-size: 24px;
+			line-height: 30px;
+		}
+
+		input[type="text"] {
+			width: 45%;
+			height: 30px;
+			border: 2px solid #ccc;
+			outline: none;
+		}
+
+		textarea {
+			width: 80%;
+		}
+
+		.autocomplete-suggestions {
+			border: 2px solid #ccc;
+			background: #FFF;
+			overflow: auto;
+		}
+
+		.autocomplete-suggestion {
+			padding: 2px 5px;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+	</style>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="jquery.autocomplete.min.js"></script>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-86657368-1"></script>
+	
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments) };
+		gtag('js', new Date());
+
+		gtag('config', 'UA-86657368-1');
+	</script>
+
+</head>
+
+<body>
+	<h1>Node Suggestive Search - example of usage</h1>
+	<a href="https://github.com/ivanvaladares/node-suggestive-search" target="_blank">https://github.com/ivanvaladares/node-suggestive-search</a>
+    <br /> 
+    The auto-complete front-end in use is <a href="https://github.com/devbridge/jQuery-Autocomplete" target="_blank">jQuery Autocomplete</a>. 
+    <br /> 
+    The loaded file was <a href="titles.json">titles.json</a> with 401276 entries from <a href="https://www.imdb.com/" target="_blank">IMDb</a>.
+
+	<br /><br />
+	<hr /><br /> Get Items names: -> time elapsed: <span id="items-timeElapsed">0ms</span><br />
+	<input type="text" id="ajax-example-items" class="typeahead" size="30">
+	<input type="button" id="btnItemsQuery" value="Query" />
+
+	<br /><br />
+	<hr /><br /> Get Words: -> time elapsed: <span id="words-timeElapsed">0ms</span> <br />
+	<input type="text" id="ajax-example-words" class="typeahead" size="30">
+	<input type="button" id="btnWordsQuery" value="Query" />
+
+	<br /><br />
+	<hr /><br /> Query results:
+	<br />
+	<textarea id="queryResults" rows="10"></textarea>
+
+	<br /><br />
+	<hr /><br />
+
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+
+			$('#ajax-example-items').autocomplete({
+				serviceUrl: '/suggestItems/',
+				paramName: 'q',
+				deferRequestBy: 300,
+				minChars: 2,
+				noCache: false,
+				preventBadQueries: true,
+				autoSelectFirst: false,
+				showNoSuggestionNotice: true,
+				transformResult: function (responseStr) {
+					var response = JSON.parse(responseStr);
+					$("#items-timeElapsed").html(response.timeElapsed);
+					return {
+						suggestions: $.map(response.items, function (dataItem) {
+							return { value: dataItem.itemName, data: dataItem.itemId };
+						})
+					};
+				}
+			});
+
+			$('#ajax-example-words').autocomplete({
+				serviceUrl: '/suggestWords/',
+				paramName: 'q',
+				deferRequestBy: 300,
+				minChars: 2,
+				noCache: false,
+				preventBadQueries: true,
+				autoSelectFirst: false,
+				showNoSuggestionNotice: true,
+				transformResult: function (responseStr) {
+					var response = JSON.parse(responseStr);
+					$("#words-timeElapsed").html(response.timeElapsed);
+					return {
+						suggestions: $.map(response.suggestions, function (dataItem) {
+							return { value: dataItem, data: "" };
+						})
+					};
+				}
+			});
+
+
+			$("#btnItemsQuery").click(function () {
+
+				$.ajax({
+					method: "GET",
+					url: "/query/?q=" + $('#ajax-example-items').val()
+				})
+					.done(function (data) {
+						$('#queryResults').val(JSON.stringify(data));
+					}
+					);
+
+			});
+
+			$("#btnWordsQuery").click(function () {
+
+				$.ajax({
+					method: "GET",
+					url: "/query/?q=" + $('#ajax-example-words').val()
+				})
+					.done(function (data) {
+						$('#queryResults').val(JSON.stringify(data));
+					}
+					);
+
+			});
+
+		});
+
+		var HOST = location.origin.replace(/^http/, 'ws')
+		var ws = new WebSocket(HOST);
+
+		ws.onmessage = function (event) {
+			console.log('Server sent:' + event.data);
+		};
+	</script>
+
+</body>
+
+</html>

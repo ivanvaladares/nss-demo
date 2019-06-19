@@ -1,22 +1,35 @@
-var nodeSuggestiveSearch = require("node-suggestive-search").init();
+const nodeSuggestiveSearch = require("node-suggestive-search").init();
             
+const path = require("path");
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.get('/q/', (req, res) =>{
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get('/query/', (req, res) =>{
 
     nodeSuggestiveSearch.query(req.query.q, true).then(data => {
-            res.send(JSON.stringify(data, null, '  '));
+            res.json(data);
         }
     );
 
 });
 
-app.get('/s/', (req, res) =>{
+app.get('/suggestWords/', (req, res) =>{
 
     nodeSuggestiveSearch.getSuggestedWords(req.query.q).then(data => {
-            res.send(JSON.stringify(data, null, '  '));
+            res.json(data);
+        }
+    );
+
+});
+
+
+app.get('/suggestItems/', (req, res) =>{
+
+    nodeSuggestiveSearch.getSuggestedItems(req.query.q).then(data => {
+            res.json(data);
         }
     );
 
@@ -25,7 +38,7 @@ app.get('/s/', (req, res) =>{
 //wait for the initialization
 nodeSuggestiveSearch.on("initialized", () => {
 
-    nodeSuggestiveSearch.loadJson("./titles.json", "utf8", "id", "title").then(() => {
+    nodeSuggestiveSearch.loadJson("./public/titles.json", "utf8", "id", "title").then(() => {
 
         app.listen(port, () => console.log(`Server listening on port ${port}!`))
 
