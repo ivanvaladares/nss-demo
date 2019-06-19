@@ -134,9 +134,9 @@
 					url: "/query/?q=" + $('#ajax-example-items').val()
 				})
 					.done(function (data) {
-						$('#queryResults').val(JSON.stringify(data));
+						$('#queryResults').val(JSON.stringify(data, null, '  '));
 					}
-					);
+				);
 
 			});
 
@@ -147,9 +147,9 @@
 					url: "/query/?q=" + $('#ajax-example-words').val()
 				})
 					.done(function (data) {
-						$('#queryResults').val(JSON.stringify(data));
+						$('#queryResults').val(JSON.stringify(data, null,  '  '));
 					}
-					);
+				);
 
 			});
 
