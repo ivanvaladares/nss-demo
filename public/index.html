@@ -1,31 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 	<meta charset="utf-8" />
 	<title>Node Suggestive Search - example of usage</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 	<style>
 		html {
-			font: normal normal normal 18px/1.2 "Helvetica Neue", Roboto, "Segoe UI", Calibri, sans-serif;
+			font-family: sans-serif;
+			-ms-text-size-adjust: 100%;
+			-webkit-text-size-adjust: 100%;
 			color: #292f33;
-		}
-
-		input {
-			padding: 8px 12px;
-			font-size: 24px;
-			line-height: 30px;
-		}
-
-		input[type="text"] {
-			width: 45%;
-			height: 30px;
-			border: 2px solid #ccc;
-			outline: none;
-		}
-
-		textarea {
-			width: 80%;
 		}
 
 		.autocomplete-suggestions {
@@ -39,12 +24,14 @@
 			white-space: nowrap;
 			overflow: hidden;
 		}
+
 	</style>
 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="jquery.autocomplete.min.js"></script>
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-86657368-1"></script>
-	
+
 	<script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag() { dataLayer.push(arguments) };
@@ -56,116 +43,132 @@
 </head>
 
 <body>
-	<h1>Node Suggestive Search - example of usage</h1>
-	<a href="https://github.com/ivanvaladares/node-suggestive-search" target="_blank">github.com/ivanvaladares/node-suggestive-search</a>
-    <br /> 
-    The auto-complete front-end in use is <a href="https://github.com/devbridge/jQuery-Autocomplete" target="_blank">jQuery Autocomplete</a> 
-    <br /> 
-    The loaded file was <a href="titles.json" target="_blank">titles.json</a> with 401276 entries from <a href="https://www.imdb.com/" target="_blank">IMDb</a>
-    <br /> 
-	You can get the souce code of this demo at <a href="https://github.com/ivanvaladares/nss-demo" target="_blank">github.com/ivanvaladares/nss-demo</a> 
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="text-center">
+
+					<h1>Node Suggestive Search</h1>
+					<h3>Example of usage</h3>
 
 
-	<br /><br />
-	<hr /><br /> Get Items names: -> time elapsed: <span id="items-timeElapsed">0ms</span><br />
-	<input type="text" id="ajax-example-items" class="typeahead" size="30">
-	<input type="button" id="btnItemsQuery" value="Query" />
-
-	<br /><br />
-	<hr /><br /> Get Words: -> time elapsed: <span id="words-timeElapsed">0ms</span> <br />
-	<input type="text" id="ajax-example-words" class="typeahead" size="30">
-	<input type="button" id="btnWordsQuery" value="Query" />
-
-	<br /><br />
-	<hr /><br /> Query results:
-	<br />
-	<textarea id="queryResults" rows="10"></textarea>
-
-	<br /><br />
-	<hr /><br />
+					<a href="https://github.com/ivanvaladares/node-suggestive-search"
+						target="_blank">github.com/ivanvaladares/node-suggestive-search</a>
+					<br />
+					The auto-complete front-end in use is <a href="https://github.com/devbridge/jQuery-Autocomplete"
+						target="_blank">jQuery Autocomplete</a>
+					<br />
+					The loaded file was <a href="titles.json" target="_blank">titles.json</a> with <strong>401276</strong> Movie Titles
+					in several languages from <a href="https://www.imdb.com/" target="_blank">IMDb</a>
+					<br />
+					You can get the souce code of this demo at <a href="https://github.com/ivanvaladares/nss-demo"
+						target="_blank">github.com/ivanvaladares/nss-demo</a>
 
 
-	<script type="text/javascript">
-		$(document).ready(function () {
+
+					<hr />Get Items: -> time elapsed: <span id="items-timeElapsed">0ms</span><br />
+					<div class="input-group mb-4">
+						<input type="text" id="ajax-example-items" class="form-control typeahead" placeholder="Search">
+						<div class="input-group-append">
+							<button class="btn btn-success" type="submit" id="btnItemsQuery">Go</button>
+						</div>
+					</div>
+
+					Get Words: -> time elapsed: <span id="words-timeElapsed">0ms</span> <br />
+					<div class="input-group">
+						<input type="text" id="ajax-example-words" class="form-control typeahead" placeholder="Search">
+						<div class="input-group-append">
+							<button class="btn btn-success" type="submit" id="btnWordsQuery">Go</button>
+						</div>
+					</div>
+					<hr />
+					
+					Query results: <br />
+					<textarea id="queryResults" rows="10" class="form-control"></textarea>
+
+					<br />
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+<script type="text/javascript">
+	$(document).ready(function () {
 
 
-			$('#ajax-example-items').autocomplete({
-				serviceUrl: '/suggestItems/',
-				paramName: 'q',
-				deferRequestBy: 300,
-				minChars: 2,
-				noCache: false,
-				preventBadQueries: true,
-				autoSelectFirst: false,
-				showNoSuggestionNotice: true,
-				transformResult: function (responseStr) {
-					var response = JSON.parse(responseStr);
-					$("#items-timeElapsed").html(response.timeElapsed);
-					return {
-						suggestions: $.map(response.items, function (dataItem) {
-							return { value: dataItem.itemName, data: dataItem.itemId };
-						})
-					};
+		$('#ajax-example-items').autocomplete({
+			serviceUrl: '/suggestItems/',
+			paramName: 'q',
+			deferRequestBy: 300,
+			minChars: 2,
+			noCache: false,
+			preventBadQueries: true,
+			autoSelectFirst: false,
+			showNoSuggestionNotice: true,
+			transformResult: function (responseStr) {
+				var response = JSON.parse(responseStr);
+				$("#items-timeElapsed").html(response.timeElapsed);
+				return {
+					suggestions: $.map(response.items, function (dataItem) {
+						return { value: dataItem.itemName, data: dataItem.itemId };
+					})
+				};
+			}
+		});
+
+		$('#ajax-example-words').autocomplete({
+			serviceUrl: '/suggestWords/',
+			paramName: 'q',
+			deferRequestBy: 300,
+			minChars: 2,
+			noCache: false,
+			preventBadQueries: true,
+			autoSelectFirst: false,
+			showNoSuggestionNotice: true,
+			transformResult: function (responseStr) {
+				var response = JSON.parse(responseStr);
+				$("#words-timeElapsed").html(response.timeElapsed);
+				return {
+					suggestions: $.map(response.suggestions, function (dataItem) {
+						return { value: dataItem, data: "" };
+					})
+				};
+			}
+		});
+
+
+		$("#btnItemsQuery").click(function () {
+
+			$.ajax({
+				method: "GET",
+				url: "/query/?q=" + $('#ajax-example-items').val()
+			})
+				.done(function (data) {
+					$('#queryResults').val(JSON.stringify(data, null, '  '));
 				}
-			});
-
-			$('#ajax-example-words').autocomplete({
-				serviceUrl: '/suggestWords/',
-				paramName: 'q',
-				deferRequestBy: 300,
-				minChars: 2,
-				noCache: false,
-				preventBadQueries: true,
-				autoSelectFirst: false,
-				showNoSuggestionNotice: true,
-				transformResult: function (responseStr) {
-					var response = JSON.parse(responseStr);
-					$("#words-timeElapsed").html(response.timeElapsed);
-					return {
-						suggestions: $.map(response.suggestions, function (dataItem) {
-							return { value: dataItem, data: "" };
-						})
-					};
-				}
-			});
-
-
-			$("#btnItemsQuery").click(function () {
-
-				$.ajax({
-					method: "GET",
-					url: "/query/?q=" + $('#ajax-example-items').val()
-				})
-					.done(function (data) {
-						$('#queryResults').val(JSON.stringify(data, null, '  '));
-					}
-				);
-
-			});
-
-			$("#btnWordsQuery").click(function () {
-
-				$.ajax({
-					method: "GET",
-					url: "/query/?q=" + $('#ajax-example-words').val()
-				})
-					.done(function (data) {
-						$('#queryResults').val(JSON.stringify(data, null,  '  '));
-					}
-				);
-
-			});
+			);
 
 		});
 
-		var HOST = location.origin.replace(/^http/, 'ws')
-		var ws = new WebSocket(HOST);
+		$("#btnWordsQuery").click(function () {
 
-		ws.onmessage = function (event) {
-			console.log('Server sent:' + event.data);
-		};
-	</script>
+			$.ajax({
+				method: "GET",
+				url: "/query/?q=" + $('#ajax-example-words').val()
+			})
+				.done(function (data) {
+					$('#queryResults').val(JSON.stringify(data, null, '  '));
+				}
+			);
 
-</body>
+		});
+
+	});
+
+</script>
 
 </html>
