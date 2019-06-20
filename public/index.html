@@ -24,10 +24,10 @@
 			white-space: nowrap;
 			overflow: hidden;
 		}
-
 	</style>
 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script src="jquery.autocomplete.min.js"></script>
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-86657368-1"></script>
@@ -59,7 +59,8 @@
 					The auto-complete front-end in use is <a href="https://github.com/devbridge/jQuery-Autocomplete"
 						target="_blank">jQuery Autocomplete</a>
 					<br />
-					The loaded file was <a href="titles.json" target="_blank">titles.json</a> with <strong>401276</strong> Movie Titles
+					The loaded file was <a href="titles.json" target="_blank">titles.json</a> with
+					<strong>401276</strong> Movie Titles
 					in several languages from <a href="https://www.imdb.com/" target="_blank">IMDb</a>
 					<br />
 					You can get the souce code of this demo at <a href="https://github.com/ivanvaladares/nss-demo"
@@ -83,8 +84,8 @@
 						</div>
 					</div>
 					<hr />
-					
-					Query results: <br />
+
+					Query results: -> time elapsed: <span id="search-timeElapsed">0ms</span><br />
 					<textarea id="queryResults" rows="10" class="form-control"></textarea>
 
 					<br />
@@ -98,7 +99,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function () {
-
 
 		$('#ajax-example-items').autocomplete({
 			serviceUrl: '/suggestItems/',
@@ -120,6 +120,16 @@
 			}
 		});
 
+		$("#btnItemsQuery").click(function () {
+			search($('#ajax-example-items').val());
+		});
+
+		$("#ajax-example-items").on("keypress", function (e) {
+			if (e.which === 13) {
+				search($('#ajax-example-items').val());
+			}
+		});		
+
 		$('#ajax-example-words').autocomplete({
 			serviceUrl: '/suggestWords/',
 			paramName: 'q',
@@ -140,34 +150,31 @@
 			}
 		});
 
-
-		$("#btnItemsQuery").click(function () {
-
-			$.ajax({
-				method: "GET",
-				url: "/query/?q=" + $('#ajax-example-items').val()
-			})
-				.done(function (data) {
-					$('#queryResults').val(JSON.stringify(data, null, '  '));
-				}
-			);
-
+		$("#btnWordsQuery").click(function () {
+			search($('#ajax-example-words').val());
 		});
 
-		$("#btnWordsQuery").click(function () {
-
-			$.ajax({
-				method: "GET",
-				url: "/query/?q=" + $('#ajax-example-words').val()
-			})
-				.done(function (data) {
-					$('#queryResults').val(JSON.stringify(data, null, '  '));
-				}
-			);
-
+		$("#ajax-example-words").on("keypress", function (e) {
+			if (e.which === 13) {
+				search($('#ajax-example-words').val());
+			}
 		});
 
 	});
+
+	function search(query) {
+		$('#queryResults').val("searching ...");
+
+		$.ajax({
+			method: "GET",
+			url: "/query/?q=" + query
+		})
+			.done(function (data) {
+				$("#search-timeElapsed").html(data.timeElapsed);
+				$('#queryResults').val(JSON.stringify(data, null, '  '));
+			}
+			);
+	}
 
 </script>
 
