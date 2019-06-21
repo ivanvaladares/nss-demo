@@ -1,16 +1,19 @@
 {
   "name": "nssdemo",
   "version": "1.0.0",
-  "description": "",
+  "author": {
+    "name": "Ivan Valadares",
+    "email": "ivanvaladares@hotmail.com"
+  },
+  "description": "A node module to help type-ahead and dropdown search boxes and also correct misspelled searches (did you mean?).",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Ivan Valadares",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "node-suggestive-search": "^1.9.8"
+    "node-suggestive-search": "^1.9.9"
   },
   "engines": {
     "node": "~10.14.1"
