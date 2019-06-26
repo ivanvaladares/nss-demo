@@ -1,4 +1,4 @@
-const nodeSuggestiveSearch = require("node-suggestive-search").init();
+const nodeSuggestiveSearch = require("node-suggestive-search").init({ cache: true });
 
 const path = require("path");
 const express = require('express');
