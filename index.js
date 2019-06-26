@@ -1,4 +1,4 @@
-const nodeSuggestiveSearch = require("node-suggestive-search").init({ cache: true });
+const nodeSuggestiveSearch = require("node-suggestive-search").init({ stopWords: ["1033", "1036", "1040", "1046", "2057"], cache: true });
 
 const path = require("path");
 const express = require('express');
